@@ -23,6 +23,16 @@ namespace API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating Api", Version = "v1" });
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed((host) => true).AllowCredentials());
+            });
+
             services.AddControllers();
             services.AddAutoMapper();
             services.AddApplicationService();
@@ -43,7 +53,7 @@ namespace API
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("CorsPolicy");
             app.UseRouting();
 
             app.UseAuthorization();
