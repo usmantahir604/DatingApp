@@ -1,4 +1,5 @@
-﻿using API.DAL.User.Models;
+﻿using API.Common.Models;
+using API.DAL.User.Models;
 using API.Database;
 using API.Interfaces;
 using AutoMapper;
@@ -10,25 +11,45 @@ namespace API.DAL.User
     {
         private readonly DatabaseContext _databaseContext;
         private readonly IMapper _mapper;
+        private readonly IIdentityService _identityService;
+        private readonly ILogger _logger;
 
-        public UserService(IMapper mapper, DatabaseContext databaseContext)
+        public UserService(IMapper mapper, DatabaseContext databaseContext, IIdentityService identityService, ILogger<UserService> logger)
         {
             _mapper = mapper;
             _databaseContext = databaseContext;
+            _identityService = identityService;
+            _logger = logger;
         }
 
-        public async Task<AppUserModel> GetUser(int id)
+        public async Task<AppUserModel> GetAppUser(int id)
         {
             var user = await _databaseContext.AppUsers.FindAsync(id);
             var result = _mapper.Map<AppUserModel>(user);
             return result;
         }
 
-        public async Task<IEnumerable<AppUserModel>> GetUsers()
+        public async Task<IEnumerable<AppUserModel>> GetAppUsers()
         {
             var users = await _databaseContext.AppUsers.ToListAsync();
             var result = _mapper.Map<IEnumerable<AppUserModel>>(users);
             return result;
+        }
+
+        public async Task<Response> CreateUserAsync(CreateUserModel model)
+        {
+            var result = await _identityService.CreateUserAsync(model.Email, model.Password);
+            if (!result.Succeeded)
+            {
+                _logger.LogError("User not created successfully");
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = "User not created successfully",
+                    Errors = result.Errors.Select(x => x.Description).ToList()
+                };
+            }
+            return new Response { IsSuccess = true, Message="Account created successfully" };
         }
     }
 }

@@ -1,10 +1,12 @@
-﻿using API.DAL.User.Models;
+﻿using API.Common.Models;
+using API.DAL.User.Models;
 
 namespace API.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<AppUserModel>> GetUsers();
-        Task<AppUserModel> GetUser(int id);
+        Task<IEnumerable<AppUserModel>> GetAppUsers();
+        Task<AppUserModel> GetAppUser(int id);
+        Task<Response> CreateUserAsync(CreateUserModel model);
     }
 }

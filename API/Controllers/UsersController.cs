@@ -16,14 +16,14 @@ namespace API.Controllers
         [HttpGet()]
         public async Task<ActionResult<IEnumerable<AppUserModel>>> GetUsers()
         {
-            var result = await _userService.GetUsers();
+            var result = await _userService.GetAppUsers();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUserModel>> GetUser(int id)
         {
-            var result = await _userService.GetUser(id);
+            var result = await _userService.GetAppUser(id);
             return Ok(result);
         }
     }

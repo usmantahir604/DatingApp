@@ -1,5 +1,11 @@
 ﻿using API.Database;
 using API.DependecyInjection;
+using API.Entities;
+using API.Filters;
+using API.Options;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -17,12 +23,20 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddDbContext<DatabaseContext>(options =>
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating Api", Version = "v1" });
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
             });
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 6;
+            });
+            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContext>()
+                .AddDefaultTokenProviders();
 
             services.AddCors(options =>
             {
@@ -33,9 +47,16 @@ namespace API
                     .SetIsOriginAllowed((host) => true).AllowCredentials());
             });
 
-            services.AddControllers();
+            services.AddControllers(option =>
+            {
+                option.Filters.Add(typeof(ModelStateValidationFilter));
+            }).AddFluentValidation(option => option.RegisterValidatorsFromAssemblyContaining<Startup>());
+            services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
             services.AddAutoMapper();
+            services.AddFluentValidatationService();
             services.AddApplicationService();
+            services.AddIdentityServices(Configuration);
+            SetSwaggerTokenDefinition(services);
         }
 
 
@@ -48,9 +69,22 @@ namespace API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dating Api v1"));
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+            }
+            var swaggerOptions = new SwaggerOptions();
+            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+            app.UseSwagger(option =>
+            {
+                option.RouteTemplate = swaggerOptions.JsonRoute;
+            });
+
+            app.UseSwaggerUI(option =>
+            {
+                option.SwaggerEndpoint(swaggerOptions.UiEndPoint, swaggerOptions.Description);
+            });
 
             app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
@@ -60,6 +94,44 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+
+        private static void SetSwaggerTokenDefinition(IServiceCollection services)
+        {
+            services.AddSwaggerGen(x =>
+            {
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating API", Version = "v1" });
+
+                x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                x.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Type = SecuritySchemeType.ApiKey,
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
             });
         }
 
