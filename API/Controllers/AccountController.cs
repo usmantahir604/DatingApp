@@ -15,10 +15,17 @@ namespace API.Controllers
             _userService = userService;
         }
 
-        [HttpPost()]
-        public async Task<ActionResult<Response>> CreateUser(CreateUserModel model)
+        [HttpPost(nameof(Register))]
+        public async Task<ActionResult<Response>> Register(CreateUserModel model)
         {
             var result = await _userService.CreateUserAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost(nameof(Login))]
+        public async Task<IActionResult> Login([FromBody] LoginUserModel model)
+        {
+            var result = await _userService.LoginUserAsync(model);
             return Ok(result);
         }
     }

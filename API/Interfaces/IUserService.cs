@@ -8,5 +8,6 @@ namespace API.Interfaces
         Task<IEnumerable<AppUserModel>> GetAppUsers();
         Task<AppUserModel> GetAppUser(int id);
         Task<Response> CreateUserAsync(CreateUserModel model);
+        Task<Response> LoginUserAsync(LoginUserModel model);
     }
 }

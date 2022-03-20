@@ -51,5 +51,24 @@ namespace API.DAL.User
             }
             return new Response { IsSuccess = true, Message="Account created successfully" };
         }
+
+        public async Task<Response> LoginUserAsync(LoginUserModel model)
+        {
+            var user = await _identityService.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                _logger.LogError("No user exist with current email address");
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = "Invalid username or password"
+                };
+            }
+            var passwordCheck = await _identityService.CheckPasswordAsync(user, model.Password);
+            if(!passwordCheck)
+                return new Response { IsSuccess = false, Message = "Invalid username or password" };
+
+            return new Response { IsSuccess = true, Message = "Logged in successfully" };
+        }
     }
 }

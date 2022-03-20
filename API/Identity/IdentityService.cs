@@ -12,6 +12,11 @@ namespace API.Identity
             _userManager = userManager;
         }
 
+        public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
+        }
+
         public async Task<IdentityResult> CreateUserAsync(string userName, string password)
         {
             var user = new ApplicationUser
@@ -20,6 +25,11 @@ namespace API.Identity
                 UserName = userName
             };
             return await _userManager.CreateAsync(user, password);
+        }
+
+        public async Task<ApplicationUser> FindByEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
     }
 
