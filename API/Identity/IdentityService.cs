@@ -31,6 +31,11 @@ namespace API.Identity
         {
             return await _userManager.FindByEmailAsync(email);
         }
+
+        public async Task<ApplicationUser> FindByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
+        }
     }
 
    

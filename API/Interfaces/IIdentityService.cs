@@ -8,5 +8,6 @@ namespace API.Interfaces
         Task<IdentityResult> CreateUserAsync(string userName, string password);
         Task<ApplicationUser> FindByEmailAsync(string email);
         Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+        Task<ApplicationUser> FindByIdAsync(string id);
     }
 }

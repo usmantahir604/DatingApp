@@ -1,12 +1,16 @@
 ﻿using API.Common.Models;
 using API.DAL.User;
 using API.DAL.User.Models;
+using API.Database;
+using API.Entities;
 using API.Identity;
 using API.Interfaces;
 using API.Modules;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -23,6 +27,21 @@ namespace API.DependecyInjection
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            return services;
+        }
+        public static IServiceCollection AddDBServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
+            });
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 6;
+            });
+            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContext>()
+                .AddDefaultTokenProviders();
             return services;
         }
 

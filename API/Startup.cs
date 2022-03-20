@@ -23,20 +23,6 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<DatabaseContext>(options =>
-            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddDbContext<DatabaseContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
-            });
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequiredLength = 6;
-            });
-            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContext>()
-                .AddDefaultTokenProviders();
 
             services.AddCors(options =>
             {
@@ -52,9 +38,11 @@ namespace API
                 option.Filters.Add(typeof(ModelStateValidationFilter));
             }).AddFluentValidation(option => option.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+
             services.AddAutoMapper();
             services.AddFluentValidatationService();
             services.AddApplicationService();
+            services.AddDBServices(Configuration);
             services.AddIdentityServices(Configuration);
             SetSwaggerTokenDefinition(services);
         }
@@ -89,7 +77,7 @@ namespace API
             app.UseHttpsRedirection();
             app.UseCors("CorsPolicy");
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

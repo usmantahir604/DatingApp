@@ -1,5 +1,6 @@
 ﻿using API.DAL.User.Models;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -21,6 +22,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<AppUserModel>> GetUser(int id)
         {
             var result = await _userService.GetAppUser(id);

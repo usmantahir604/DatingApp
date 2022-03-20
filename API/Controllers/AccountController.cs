@@ -16,16 +16,23 @@ namespace API.Controllers
         }
 
         [HttpPost(nameof(Register))]
-        public async Task<ActionResult<Response>> Register(CreateUserModel model)
+        public async Task<ActionResult<Response<AuthenticateUserModel>>> Register(CreateUserModel model)
         {
             var result = await _userService.CreateUserAsync(model);
             return Ok(result);
         }
 
         [HttpPost(nameof(Login))]
-        public async Task<IActionResult> Login([FromBody] LoginUserModel model)
+        public async Task<ActionResult<Response<AuthenticateUserModel>>> Login([FromBody] LoginUserModel model)
         {
             var result = await _userService.LoginUserAsync(model);
+            return Ok(result);
+        }
+
+        [HttpPost(nameof(RefreshToken))]
+        public async Task<ActionResult<Response<AuthenticateUserModel>>> RefreshToken([FromBody] RefreshTokenModel model)
+        {
+            var result = await _userService.RefreshTokenAsync(model.Token, model.RefreshToken);
             return Ok(result);
         }
     }

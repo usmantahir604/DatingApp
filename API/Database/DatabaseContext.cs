@@ -10,5 +10,6 @@ namespace API.Database
         {
         }
         public DbSet<AppUser> AppUsers { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
