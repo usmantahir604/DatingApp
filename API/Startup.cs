@@ -36,6 +36,7 @@ namespace API
             services.AddControllers(option =>
             {
                 option.Filters.Add(typeof(ModelStateValidationFilter));
+                option.Filters.Add<FluentValidationFilter>();
             }).AddFluentValidation(option => option.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 

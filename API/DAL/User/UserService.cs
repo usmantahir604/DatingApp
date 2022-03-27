@@ -47,12 +47,13 @@ namespace API.DAL.User
             if (!result.Succeeded)
             {
                 _logger.LogError("User not created successfully");
-                return new Response<AuthenticateUserModel>
-                {
-                    IsSuccess = false,
-                    Message = "User not created successfully",
-                    Errors = result.Errors.Select(x => x.Description).ToList()
-                };
+                //return new Response<AuthenticateUserModel>
+                //{
+                //    IsSuccess = false,
+                //    Message = "User not created successfully",
+                //    Errors = result.Errors.Select(x => x.Description).ToList()
+                //};
+                throw new FluentValidation.ValidationException("User not created successfully");
             }
             var identityUser = await _identityService.FindByEmailAsync(model.Email);
             return await _tokenGenerator.GenerateUserToken(identityUser);
