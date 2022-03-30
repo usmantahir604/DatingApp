@@ -65,15 +65,11 @@ namespace API.DAL.User
             if (user == null)
             {
                 _logger.LogError("No user exist with current email address");
-                return new Response<AuthenticateUserModel>
-                {
-                    IsSuccess = false,
-                    Message = "Invalid username or password"
-                };
+                throw new FluentValidation.ValidationException("Invalid username or password");
             }
             var passwordCheck = await _identityService.CheckPasswordAsync(user, model.Password);
             if(!passwordCheck)
-                return new Response<AuthenticateUserModel> { IsSuccess = false, Message = "Invalid username or password" };
+                throw new FluentValidation.ValidationException("Invalid username or password");
 
             return await _tokenGenerator.GenerateUserToken(user);
         }
