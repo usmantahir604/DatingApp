@@ -2,6 +2,7 @@
 using API.DependecyInjection;
 using API.Entities;
 using API.Filters;
+using API.Middleware;
 using API.Options;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -55,14 +56,7 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
+            app.UseMiddleware<ExceptionMiddleware>();
             var swaggerOptions = new SwaggerOptions();
             Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
             app.UseSwagger(option =>
