@@ -29,7 +29,7 @@ namespace API.Identity
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
@@ -41,7 +41,7 @@ namespace API.Identity
             var refreshToken = new RefreshToken
             {
                 JwtId = token.Id,
-                UserId = user.Id,
+                UserId = user.Id.ToString(),
                 CreatedDate = DateTime.UtcNow,
                 ExpiryDate = DateTime.UtcNow.AddMonths(6)
             };
