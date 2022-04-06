@@ -43,7 +43,7 @@ namespace API.DAL.User
 
         public async Task<Response<AuthenticateUserModel>> CreateUserAsync(CreateUserModel model)
         {
-            var result = await _identityService.CreateUserAsync(model.Email, model.Password);
+            var result = await _identityService.CreateUserAsync(model.UserName, model.Password);
             if (!result.Succeeded)
             {
                 _logger.LogError("User not created successfully");
@@ -55,13 +55,13 @@ namespace API.DAL.User
                 //};
                 throw new FluentValidation.ValidationException("User not created successfully");
             }
-            var identityUser = await _identityService.FindByEmailAsync(model.Email);
+            var identityUser = await _identityService.FindByUserNameAsync(model.UserName);
             return await _tokenGenerator.GenerateUserToken(identityUser);
         }
 
         public async Task<Response<AuthenticateUserModel>> LoginUserAsync(LoginUserModel model)
         {
-            var user = await _identityService.FindByEmailAsync(model.Email);
+            var user = await _identityService.FindByUserNameAsync(model.UserName);
             if (user == null)
             {
                 _logger.LogError("No user exist with current email address");

@@ -1,6 +1,7 @@
 ﻿using API.Entities;
 using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Identity
 {
@@ -21,7 +22,6 @@ namespace API.Identity
         {
             var user = new ApplicationUser
             {
-                Email = userName,
                 UserName = userName
             };
             return await _userManager.CreateAsync(user, password);
@@ -35,6 +35,11 @@ namespace API.Identity
         public async Task<ApplicationUser> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<ApplicationUser> FindByUserNameAsync(string userName)
+        {
+            return  await _userManager.Users.SingleOrDefaultAsync(x => x.UserName == userName);
         }
     }
 

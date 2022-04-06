@@ -30,7 +30,7 @@ namespace API.Identity
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifeTime),
@@ -53,7 +53,7 @@ namespace API.Identity
                 Message = "User login successfully",
                 Result = new AuthenticateUserModel
                 {
-                    Email = user.Email,
+                    UserName = user.UserName,
                     Token = tokenHandler.WriteToken(token),
                     RefreshToken = refreshToken.Token.ToString()
                 }
