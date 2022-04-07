@@ -21,9 +21,11 @@ namespace API.DependecyInjection
         public static IServiceCollection AddAutoMapper(this IServiceCollection services)
         {
             var appUserMappingProfile = ApplicationModule.AppUserMappingProfile();
+            var applicationUserMappingProfile = ApplicationModule.ApplicationUserMappingProfile();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(appUserMappingProfile);
+                mc.AddProfile(applicationUserMappingProfile);
             });
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);

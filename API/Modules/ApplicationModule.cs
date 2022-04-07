@@ -9,5 +9,10 @@ namespace API.Modules
         {
             return new AppUserMappingProfile();
         }
+
+        public static Profile ApplicationUserMappingProfile()
+        {
+            return new ApplicationUserMappingProfile();
+        }
     }
 }

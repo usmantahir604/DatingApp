@@ -68,7 +68,7 @@ namespace API.DAL.User
                 throw new FluentValidation.ValidationException("Invalid username or password");
             }
             var passwordCheck = await _identityService.CheckPasswordAsync(user, model.Password);
-            if(!passwordCheck)
+            if (!passwordCheck)
                 throw new FluentValidation.ValidationException("Invalid username or password");
 
             return await _tokenGenerator.GenerateUserToken(user);
@@ -148,5 +148,39 @@ namespace API.DAL.User
                 IsSuccess = true
             };
         }
+
+        public async Task<ApplicationUser> GetUserByIdAsync(string id)
+        {
+            return await _databaseContext.Users.FindAsync(id);
+        }
+
+        public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
+        {
+            return await _databaseContext.Users
+                .Include(p => p.Photos)
+                .SingleOrDefaultAsync(x => x.UserName == username);
+
+        }
+
+
+        public async Task<string> GetUserGender(string username)
+        {
+            return await _databaseContext.Users
+                .Where(x => x.UserName == username)
+                .Select(x => x.Gender).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
+        {
+            return await _databaseContext.Users
+                .Include(p => p.Photos)
+                .ToListAsync();
+        }
+
+        public void Update(ApplicationUser user)
+        {
+            _databaseContext.Entry(user).State = EntityState.Modified;
+        }
+
     }
 }

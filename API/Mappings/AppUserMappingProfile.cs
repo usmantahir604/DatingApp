@@ -9,6 +9,7 @@ namespace API.Mappings
         public AppUserMappingProfile()
         {
             CreateMap<AppUser, AppUserModel>().ReverseMap();
+           
         }
     }
 }
