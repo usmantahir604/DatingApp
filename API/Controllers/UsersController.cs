@@ -15,17 +15,17 @@ namespace API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<AppUserModel>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<ApplicationUserModel>>> GetUsers()
         {
-            var result = await _userService.GetAppUsers();
+            var result = await _userService.GetApplicationUsers();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        [Authorize]
-        public async Task<ActionResult<AppUserModel>> GetUser(int id)
+        //[Authorize]
+        public async Task<ActionResult<ApplicationUserModel>> GetUser(string id)
         {
-            var result = await _userService.GetAppUser(id);
+            var result = await _userService.GetApplicationUser(id);
             return Ok(result);
         }
     }

@@ -27,17 +27,17 @@ namespace API.DAL.User
             _logger = logger;
         }
 
-        public async Task<AppUserModel> GetAppUser(int id)
+        public async Task<ApplicationUserModel> GetApplicationUser(string id)
         {
-            var user = await _databaseContext.AppUsers.FindAsync(id);
-            var result = _mapper.Map<AppUserModel>(user);
+            var user = await _databaseContext.Users.Include(p => p.Photos).SingleOrDefaultAsync(x=>x.Id==id);
+            var result = _mapper.Map<ApplicationUserModel>(user);
             return result;
         }
 
-        public async Task<IEnumerable<AppUserModel>> GetAppUsers()
+        public async Task<IEnumerable<ApplicationUserModel>> GetApplicationUsers()
         {
-            var users = await _databaseContext.AppUsers.ToListAsync();
-            var result = _mapper.Map<IEnumerable<AppUserModel>>(users);
+            var users = await _databaseContext.Users.Include(p => p.Photos).ToListAsync();
+            var result = _mapper.Map<IEnumerable<ApplicationUserModel>>(users);
             return result;
         }
 

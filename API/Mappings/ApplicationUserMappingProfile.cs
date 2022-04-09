@@ -8,7 +8,8 @@ namespace API.Mappings
     {
         public ApplicationUserMappingProfile()
         {
-            CreateMap<ApplicationUser, ApplicationUserModel>().ReverseMap();
+            CreateMap<ApplicationUser, ApplicationUserModel>();
+            CreateMap<Photo, PhotoModel>();
         }
     }
 }
