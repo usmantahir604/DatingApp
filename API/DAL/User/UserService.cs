@@ -4,6 +4,7 @@ using API.Database;
 using API.Entities;
 using API.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -27,18 +28,28 @@ namespace API.DAL.User
             _logger = logger;
         }
 
+
+        
         public async Task<ApplicationUserModel> GetApplicationUser(string id)
         {
-            var user = await _databaseContext.Users.Include(p => p.Photos).SingleOrDefaultAsync(x=>x.Id==id);
-            var result = _mapper.Map<ApplicationUserModel>(user);
-            return result;
+            //Project to not call those properties which are not part of VM and Join is not allow with projection
+            var user = await _databaseContext.Users.
+                ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider)
+                //.Include(p => p.Photos)
+                .SingleOrDefaultAsync(x=>x.Id==id);
+            
+            //var result = _mapper.Map<ApplicationUserModel>(user);
+            return user;
         }
 
         public async Task<IEnumerable<ApplicationUserModel>> GetApplicationUsers()
         {
-            var users = await _databaseContext.Users.Include(p => p.Photos).ToListAsync();
-            var result = _mapper.Map<IEnumerable<ApplicationUserModel>>(users);
-            return result;
+            var users = await _databaseContext.Users
+                //.Include(x=>x.Photos)
+                .ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+            //var result = _mapper.Map<IEnumerable<ApplicationUserModel>>(users);
+            return users;
         }
 
         public async Task<Response<AuthenticateUserModel>> CreateUserAsync(CreateUserModel model)
