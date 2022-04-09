@@ -8,7 +8,8 @@ namespace API.Mappings
     {
         public ApplicationUserMappingProfile()
         {
-            CreateMap<ApplicationUser, ApplicationUserModel>();
+            CreateMap<ApplicationUser, ApplicationUserModel>()
+                .ForMember(dest=>dest.PhotoUrl, opt=>opt.MapFrom(src=>src.Photos.FirstOrDefault(x=>x.IsMain).Url));
             CreateMap<Photo, PhotoModel>();
         }
     }
