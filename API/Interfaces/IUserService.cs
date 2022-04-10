@@ -7,7 +7,7 @@ namespace API.Interfaces
     public interface IUserService
     {
         Task<IEnumerable<ApplicationUserModel>> GetApplicationUsers();
-        Task<ApplicationUserModel> GetApplicationUser(string id);
+        Task<ApplicationUserModel> GetApplicationUser(string username);
         Task<Response<AuthenticateUserModel>> CreateUserAsync(CreateUserModel model);
         Task<Response<AuthenticateUserModel>> LoginUserAsync(LoginUserModel model);
         Task<Response<AuthenticateUserModel>> RefreshTokenAsync(string token, string refreshToken);

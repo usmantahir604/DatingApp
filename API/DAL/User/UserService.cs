@@ -30,13 +30,13 @@ namespace API.DAL.User
 
 
         
-        public async Task<ApplicationUserModel> GetApplicationUser(string id)
+        public async Task<ApplicationUserModel> GetApplicationUser(string username)
         {
             //Project to not call those properties which are not part of VM and Join is not allow with projection
             var user = await _databaseContext.Users.
                 ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider)
                 //.Include(p => p.Photos)
-                .SingleOrDefaultAsync(x=>x.Id==id);
+                .SingleOrDefaultAsync(x=>x.Username== username);
             
             //var result = _mapper.Map<ApplicationUserModel>(user);
             return user;

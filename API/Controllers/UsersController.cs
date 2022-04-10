@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class UsersController : BaseAPIController
     {
         private readonly IUserService _userService;
@@ -21,11 +22,11 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        //[Authorize]
-        public async Task<ActionResult<ApplicationUserModel>> GetUser(string id)
+        [HttpGet("{username}")]
+        
+        public async Task<ActionResult<ApplicationUserModel>> GetUser(string username)
         {
-            var result = await _userService.GetApplicationUser(id);
+            var result = await _userService.GetApplicationUser(username);
             return Ok(result);
         }
     }
