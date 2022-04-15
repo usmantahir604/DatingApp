@@ -16,5 +16,6 @@ namespace API.Interfaces
         Task<string> GetUserGender(string username);
         Task<IEnumerable<ApplicationUser>> GetUsersAsync();
         void Update(ApplicationUser user);
+        Task<bool> SaveAllAsync();
     }
 }

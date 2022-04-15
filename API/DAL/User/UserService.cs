@@ -193,5 +193,10 @@ namespace API.DAL.User
             _databaseContext.Entry(user).State = EntityState.Modified;
         }
 
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _databaseContext.SaveChangesAsync() > 0;
+        }
+
     }
 }
