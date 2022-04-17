@@ -51,7 +51,7 @@ namespace API.Controllers
             return BadRequest("Failed to update user");
         }
 
-
+        [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoModel>> AddPhoto(IFormFile file)
         {
             var user= await _userService.GetUserByUsernameAsync(User.GetUsername());
