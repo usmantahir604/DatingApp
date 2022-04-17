@@ -43,7 +43,7 @@ namespace API
 
             services.AddAutoMapper();
             services.AddFluentValidatationService();
-            services.AddApplicationService();
+            services.AddApplicationService(Configuration);
             services.AddDBServices(Configuration);
             services.AddIdentityServices(Configuration);
             SetSwaggerTokenDefinition(services);

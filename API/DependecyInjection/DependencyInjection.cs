@@ -1,4 +1,5 @@
-﻿using API.Common.Models;
+﻿using API.CloudinaryServices;
+using API.Common.Models;
 using API.DAL.User;
 using API.DAL.User.Models;
 using API.Database;
@@ -47,9 +48,11 @@ namespace API.DependecyInjection
             return services;
         }
 
-        public static IServiceCollection AddApplicationService(this IServiceCollection services)
+        public static IServiceCollection AddApplicationService(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<CloudinarySettings>(configuration.GetSection(nameof(CloudinarySettings)));
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IPhotoService, PhotoService>();
             return services;
         }
 
