@@ -32,7 +32,7 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("{username}",Name = "GetUser")]
         
         public async Task<ActionResult<ApplicationUserModel>> GetUser(string username)
         {
@@ -69,7 +69,8 @@ namespace API.Controllers
             user.Photos.Add(photo);
             if(await _userService.SaveAllAsync())
             {
-                return _mapper.Map<PhotoModel>(photo);
+                //return _mapper.Map<PhotoModel>(photo);
+                return CreatedAtRoute("GetUser", new { username = user.UserName }, _mapper.Map<PhotoModel>(photo));
             }
             return BadRequest("Problem adding photo");
         }
