@@ -55,6 +55,7 @@ namespace API.Identity
                 Result = new AuthenticateUserModel
                 {
                     UserName = user.UserName,
+                    PhotoUrl = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
                     Token = tokenHandler.WriteToken(token),
                     RefreshToken = refreshToken.Token.ToString()
                 }

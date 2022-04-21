@@ -39,7 +39,7 @@ namespace API.Identity
 
         public async Task<ApplicationUser> FindByUserNameAsync(string userName)
         {
-            return  await _userManager.Users.SingleOrDefaultAsync(x => x.UserName == userName);
+            return  await _userManager.Users.Include(x=>x.Photos).SingleOrDefaultAsync(x => x.UserName == userName);
         }
     }
 
