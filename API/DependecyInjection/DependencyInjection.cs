@@ -66,8 +66,8 @@ namespace API.DependecyInjection
 
         public static IServiceCollection AddFluentValidatationService(this IServiceCollection services)
         {
-            services.AddTransient<IValidator<CreateUserModel>, CreateUserModelValidator>();
-            services.AddTransient<IValidator<LoginUserModel>, LoginUserModelValidator>();
+            //services.AddTransient<IValidator<CreateUserModel>, CreateUserModelValidator>();
+            //services.AddTransient<IValidator<LoginUserModel>, LoginUserModelValidator>();
             return services;
         }
 

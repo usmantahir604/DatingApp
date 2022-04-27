@@ -1,4 +1,5 @@
-﻿using API.Entities;
+﻿using API.DAL.User.Models;
+using API.Entities;
 using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +19,8 @@ namespace API.Identity
             return await _userManager.CheckPasswordAsync(user, password);
         }
 
-        public async Task<IdentityResult> CreateUserAsync(string userName, string password)
+        public async Task<IdentityResult> CreateUserAsync(ApplicationUser user,string password)
         {
-            var user = new ApplicationUser
-            {
-                UserName = userName
-            };
             return await _userManager.CreateAsync(user, password);
         }
 

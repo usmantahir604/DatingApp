@@ -1,11 +1,12 @@
-﻿using API.Entities;
+﻿using API.DAL.User.Models;
+using API.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace API.Interfaces
 {
     public interface IIdentityService
     {
-        Task<IdentityResult> CreateUserAsync(string userName, string password);
+        Task<IdentityResult> CreateUserAsync(ApplicationUser user, string password);
         Task<ApplicationUser> FindByEmailAsync(string email);
         Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
         Task<ApplicationUser> FindByIdAsync(string id);

@@ -56,6 +56,7 @@ namespace API.Identity
                 {
                     UserName = user.UserName,
                     PhotoUrl = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
+                    KnownAs = user.KnownAs,
                     Token = tokenHandler.WriteToken(token),
                     RefreshToken = refreshToken.Token.ToString()
                 }

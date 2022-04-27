@@ -54,7 +54,8 @@ namespace API.DAL.User
 
         public async Task<Response<AuthenticateUserModel>> CreateUserAsync(CreateUserModel model)
         {
-            var result = await _identityService.CreateUserAsync(model.UserName, model.Password);
+            var user = _mapper.Map<ApplicationUser>(model);
+            var result = await _identityService.CreateUserAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 _logger.LogError("User not created successfully");
