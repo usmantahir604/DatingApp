@@ -1,6 +1,7 @@
 ﻿using API.DAL.User.Models;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -26,9 +27,10 @@ namespace API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<ApplicationUserModel>>> GetUsers()
+        public async Task<ActionResult<PagedList<ApplicationUserModel>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var result = await _userService.GetApplicationUsers();
+            var result = await _userService.GetApplicationUsers(userParams);
+            Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
             return Ok(result);
         }
 
@@ -37,6 +39,7 @@ namespace API.Controllers
         public async Task<ActionResult<ApplicationUserModel>> GetUser(string username)
         {
             var result = await _userService.GetApplicationUser(username);
+           
             return Ok(result);
         }
 

@@ -2,6 +2,7 @@
 using API.DAL.User.Models;
 using API.Database;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -42,14 +43,20 @@ namespace API.DAL.User
             return user;
         }
 
-        public async Task<IEnumerable<ApplicationUserModel>> GetApplicationUsers()
+        public async Task<PagedList<ApplicationUserModel>> GetApplicationUsers(UserParams userParams)
         {
-            var users = await _databaseContext.Users
-                //.Include(x=>x.Photos)
+            var query =  _databaseContext.Users
                 .ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .AsNoTracking();
+            return await PagedList<ApplicationUserModel>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+
+
+            //var users = await _databaseContext.Users
+            //    //.Include(x=>x.Photos)
+            //    .ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider)
+            //    .ToListAsync();
             //var result = _mapper.Map<IEnumerable<ApplicationUserModel>>(users);
-            return users;
+            //return users;
         }
 
         public async Task<Response<AuthenticateUserModel>> CreateUserAsync(CreateUserModel model)

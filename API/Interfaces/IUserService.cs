@@ -1,12 +1,13 @@
 ﻿using API.Common.Models;
 using API.DAL.User.Models;
 using API.Entities;
+using API.Helpers;
 
 namespace API.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<ApplicationUserModel>> GetApplicationUsers();
+        Task<PagedList<ApplicationUserModel>> GetApplicationUsers(UserParams userParams);
         Task<ApplicationUserModel> GetApplicationUser(string username);
         Task<Response<AuthenticateUserModel>> CreateUserAsync(CreateUserModel model);
         Task<Response<AuthenticateUserModel>> LoginUserAsync(LoginUserModel model);
