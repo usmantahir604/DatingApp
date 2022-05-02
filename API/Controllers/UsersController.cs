@@ -29,6 +29,12 @@ namespace API.Controllers
         [HttpGet()]
         public async Task<ActionResult<PagedList<ApplicationUserModel>>> GetUsers([FromQuery] UserParams userParams)
         {
+            var user = await _userService.GetUserByUsernameAsync(User.GetUsername());
+            userParams.CurrentUserName = user.UserName;
+
+            if (string.IsNullOrWhiteSpace(userParams.Gender))
+                userParams.Gender = user.Gender == "male" ? "female" : "male";
+
             var result = await _userService.GetApplicationUsers(userParams);
             Response.AddPaginationHeader(result.CurrentPage, result.PageSize, result.TotalCount, result.TotalPages);
             return Ok(result);

@@ -45,10 +45,11 @@ namespace API.DAL.User
 
         public async Task<PagedList<ApplicationUserModel>> GetApplicationUsers(UserParams userParams)
         {
-            var query =  _databaseContext.Users
-                .ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider)
-                .AsNoTracking();
-            return await PagedList<ApplicationUserModel>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+            var query =  _databaseContext.Users.AsQueryable();
+            query = query.Where(x => x.UserName != userParams.CurrentUserName);
+            query = query.Where(x=>x.Gender==userParams.Gender);
+            return await PagedList<ApplicationUserModel>.
+                CreateAsync(query.ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider).AsNoTracking(), userParams.PageNumber, userParams.PageSize);
 
 
             //var users = await _databaseContext.Users
