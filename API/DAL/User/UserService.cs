@@ -48,6 +48,11 @@ namespace API.DAL.User
             var query =  _databaseContext.Users.AsQueryable();
             query = query.Where(x => x.UserName != userParams.CurrentUserName);
             query = query.Where(x=>x.Gender==userParams.Gender);
+
+            var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+            var maxDob = DateTime.Today.AddYears(-userParams.MinAge - 1);
+
+            query = query.Where(x=>x.DateOfBirth>=minDob && x.DateOfBirth<=maxDob);
             return await PagedList<ApplicationUserModel>.
                 CreateAsync(query.ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider).AsNoTracking(), userParams.PageNumber, userParams.PageSize);
 
