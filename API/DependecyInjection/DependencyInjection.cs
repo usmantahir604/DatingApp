@@ -4,6 +4,7 @@ using API.DAL.User;
 using API.DAL.User.Models;
 using API.Database;
 using API.Entities;
+using API.Helpers;
 using API.Identity;
 using API.Interfaces;
 using API.Modules;
@@ -53,6 +54,7 @@ namespace API.DependecyInjection
             services.Configure<CloudinarySettings>(configuration.GetSection(nameof(CloudinarySettings)));
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPhotoService, PhotoService>();
+            services.AddTransient<LogUserActivity>();
             return services;
         }
 

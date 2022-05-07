@@ -53,6 +53,12 @@ namespace API.DAL.User
             var maxDob = DateTime.Today.AddYears(-userParams.MinAge - 1);
 
             query = query.Where(x=>x.DateOfBirth>=minDob && x.DateOfBirth<=maxDob);
+
+            query = userParams.OrderBy switch
+            {
+                "created"=>query.OrderByDescending(x=>x.Created),
+                _=>query.OrderByDescending(x=>x.LastActive)
+            };
             return await PagedList<ApplicationUserModel>.
                 CreateAsync(query.ProjectTo<ApplicationUserModel>(_mapper.ConfigurationProvider).AsNoTracking(), userParams.PageNumber, userParams.PageSize);
 
@@ -176,7 +182,7 @@ namespace API.DAL.User
 
         public async Task<ApplicationUser> GetUserByIdAsync(string id)
         {
-            return await _databaseContext.Users.FindAsync(id);
+            return await _identityService.FindByIdAsync(id);
         }
 
         public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
