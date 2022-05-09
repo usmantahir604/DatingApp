@@ -1,7 +1,9 @@
 ﻿using API.DAL.Like.Models;
 using API.Database;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.DAL.Like
 {
@@ -12,19 +14,42 @@ namespace API.DAL.Like
         {
             _databaseContext = databaseContext;
         }
-        public Task<UserLike> GetUserLike(string sourceUserId, string likedUserId)
+        public async Task<UserLike> GetUserLike(string sourceUserId, string likedUserId)
         {
-            throw new NotImplementedException();
+            return await _databaseContext.Likes.FindAsync(sourceUserId, likedUserId);
         }
 
-        public Task<IEnumerable<LikeModel>> GetUserLikes(string predicate, string userId)
+        public async Task<IEnumerable<LikeModel>> GetUserLikes(string predicate, string userId)
         {
-            throw new NotImplementedException();
+            var users = _databaseContext.Users.OrderBy(u => u.UserName).AsQueryable();
+            var likes = _databaseContext.Likes.AsQueryable();
+
+            if (predicate == "liked")
+            {
+                likes = likes.Where(like => like.SourceUserId == userId);
+                users = likes.Select(like => like.LikedUser);
+            }
+
+            if (predicate == "likedBy")
+            {
+                likes = likes.Where(like => like.LikedUserId == userId);
+                users = likes.Select(like => like.SourceUser);
+            }
+
+            return await users.Select(user => new LikeModel
+            {
+                Username = user.UserName,
+                KnownAs = user.KnownAs,
+                Age = user.DateOfBirth.CalculateAge(),
+                PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain).Url,
+                City = user.City,
+                Id = user.Id
+            }).ToListAsync();
         }
 
-        public Task<ApplicationUser> GetUserWithLikes(string userId)
+        public async Task<ApplicationUser> GetUserWithLikes(string userId)
         {
-            throw new NotImplementedException();
+            return await _databaseContext.Users.Include(x=>x.LikedUsers).Where(x=>x.Id == userId).FirstOrDefaultAsync();
         }
     }
 }
