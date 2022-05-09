@@ -1,5 +1,6 @@
 ﻿using API.CloudinaryServices;
 using API.Common.Models;
+using API.DAL.Like;
 using API.DAL.User;
 using API.DAL.User.Models;
 using API.Database;
@@ -54,6 +55,7 @@ namespace API.DependecyInjection
             services.Configure<CloudinarySettings>(configuration.GetSection(nameof(CloudinarySettings)));
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPhotoService, PhotoService>();
+            services.AddTransient<ILikeService, LikeService>();
             services.AddTransient<LogUserActivity>();
             return services;
         }
