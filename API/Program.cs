@@ -29,6 +29,7 @@ namespace API
                     catch (Exception ex)
                     {
                         Console.WriteLine($"Exception: {ex}");
+                        throw ex;
                     }
                 }
                 await host.RunAsync();
