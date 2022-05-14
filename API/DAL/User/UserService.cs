@@ -6,6 +6,7 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -84,7 +85,7 @@ namespace API.DAL.User
                 //    Message = "User not created successfully",
                 //    Errors = result.Errors.Select(x => x.Description).ToList()
                 //};
-                throw new FluentValidation.ValidationException("User not created successfully");
+                throw new ValidationException("User not created successfully");
             }
             var identityUser = await _identityService.FindByUserNameAsync(model.UserName);
             return await _tokenGenerator.GenerateUserToken(identityUser);

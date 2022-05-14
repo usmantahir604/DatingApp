@@ -13,6 +13,7 @@ namespace API.DAL.User.Models
             RuleFor(x => x.Country).NotNull().NotEmpty();
             RuleFor(x => x.Gender).NotNull().NotEmpty();
             RuleFor(x => x.DateOfBirth).NotNull().NotEmpty();
+            RuleFor(x => x.PlanId).GreaterThan(0);
         }
     }
 }
