@@ -14,5 +14,9 @@ namespace API.Modules
         {
             return new ApplicationUserMappingProfile();
         }
+        public static Profile MessageMappingProfile()
+        {
+            return new MessageMappingProfile();
+        }
     }
 }
