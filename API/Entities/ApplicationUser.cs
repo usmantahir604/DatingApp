@@ -24,5 +24,7 @@ namespace API.Entities
         public ICollection<UserLike> LikedUsers { get; set; }
 
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<Message> MessagesSent { get; set; }
+        public virtual ICollection<Message> MessagesRecieved { get; set; }
     }
 }
