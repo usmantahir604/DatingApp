@@ -40,7 +40,7 @@ namespace API.Database
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Message>()
-                   .HasOne(s => s.Seder)
+                   .HasOne(s => s.Sender)
                    .WithMany(l => l.MessagesSent)
                    .OnDelete(DeleteBehavior.Restrict);
         }

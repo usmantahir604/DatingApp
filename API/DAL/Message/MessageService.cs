@@ -2,14 +2,19 @@
 using API.Database;
 using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+
 namespace API.DAL.Message
 {
     public class MessageService : IMessageService
     {
         private readonly DatabaseContext _databaseContext;
-        public MessageService(DatabaseContext databaseContext)
+        private readonly IMapper _mapper;
+        public MessageService(DatabaseContext databaseContext, IMapper mapper)
         {
             _databaseContext = databaseContext;
+            _mapper = mapper;
         }
 
         public void AddMessage(Entities.Message message)
@@ -27,9 +32,18 @@ namespace API.DAL.Message
             return await _databaseContext.Messages.FindAsync(id);
         }
 
-        public Task<PagedList<MessageModel>> GetMessagesForUser()
+        public Task<PagedList<MessageModel>> GetMessagesForUser(MessageParams messageParams)
         {
-            throw new NotImplementedException();
+            var query = _databaseContext.Messages.OrderByDescending(x=>x.MessageSent).AsQueryable();
+            query = messageParams.Container switch
+            {
+                "Inbox" => query.Where(x=>x.RecipientUsername==messageParams.Username),
+                "Outbox" => query.Where(x=>x.SenderUsername==messageParams.Username),
+                _ => query.Where(x=>x.RecipientUsername==messageParams.Username && x.DateRead==null)
+            };
+
+            var message = query.ProjectTo<MessageModel>(_mapper.ConfigurationProvider);
+            return PagedList<MessageModel>.CreateAsync(message,messageParams.PageNumber,messageParams.PageSize);
         }
 
         public Task<IEnumerable<MessageModel>> GetMessagesThread(string currentUserId, string recipientId)

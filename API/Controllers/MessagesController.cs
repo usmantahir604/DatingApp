@@ -1,6 +1,7 @@
 ﻿using API.DAL.Message.Models;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -43,6 +44,15 @@ namespace API.Controllers
 
             if(await _messageService.SaveAllAsync()) return Ok(_mapper.Map<MessageModel>(message));
             return BadRequest();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MessageModel>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
+        {
+            messageParams.Username= User.GetUsername();
+            var messages = await _messageService.GetMessagesForUser(messageParams);
+            Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
+            return Ok(messages);
         }
 
     }
