@@ -38,9 +38,9 @@ namespace API.DAL.Message
             var query = _databaseContext.Messages.OrderByDescending(x=>x.MessageSent).AsQueryable();
             query = messageParams.Container switch
             {
-                "Inbox" => query.Where(x=>x.RecipientUsername==messageParams.Username),
-                "Outbox" => query.Where(x=>x.SenderUsername==messageParams.Username),
-                _ => query.Where(x=>x.RecipientUsername==messageParams.Username && x.DateRead==null)
+                "Inbox" => query.Where(x=>x.RecipientUsername==messageParams.Username && !x.RecipientDeleted),
+                "Outbox" => query.Where(x=>x.SenderUsername==messageParams.Username && !x.SenderDeleted),
+                _ => query.Where(x=>x.RecipientUsername==messageParams.Username && x.DateRead==null && !x.RecipientDeleted)
             };
 
             var message = query.ProjectTo<MessageModel>(_mapper.ConfigurationProvider);
@@ -52,10 +52,10 @@ namespace API.DAL.Message
             var messages = await _databaseContext.Messages
                             .Include(x=>x.Sender).ThenInclude(x=>x.Photos)
                             .Include(x=>x.Recipient).ThenInclude(x=>x.Photos)
-                            .Where(x => x.Recipient.UserName == currentUsername
+                            .Where(x => x.Recipient.UserName == currentUsername && !x.RecipientDeleted
                             && x.Sender.UserName==recipientUsername
                             ||x.Recipient.UserName==recipientUsername
-                            && x.Sender.UserName==currentUsername)
+                            && x.Sender.UserName==currentUsername && !x.SenderDeleted)
                             .OrderBy(x=>x.MessageSent)
                             .ToListAsync();
             var unreadMessages=messages.Where(x=>x.DateRead==null && x.Recipient.UserName==currentUsername).ToList();

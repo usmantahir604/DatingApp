@@ -46,13 +46,19 @@ namespace API.Controllers
             return BadRequest();
         }
 
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MessageModel>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
+        public async Task<ActionResult<IEnumerable<MessageModel>>> GetMessagesForUser([FromQuery]
+            MessageParams messageParams)
         {
-            messageParams.Username= User.GetUsername();
+            messageParams.Username = User.GetUsername();
+
             var messages = await _messageService.GetMessagesForUser(messageParams);
-            Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
-            return Ok(messages);
+
+            Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize,
+                messages.TotalCount, messages.TotalPages);
+
+            return messages;
         }
 
         [HttpGet("thread/{username}")]
@@ -60,6 +66,29 @@ namespace API.Controllers
         {
             var currentUsername = User.GetUsername();
             return Ok(await _messageService.GetMessagesThread(currentUsername, username));
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMessage(int id)
+        {
+            var username = User.GetUsername();
+
+            var message = await _messageService.GetMessage(id);
+
+            if (message.Sender.UserName != username && message.Recipient.UserName != username)
+                return Unauthorized();
+
+            if (message.Sender.UserName == username) message.SenderDeleted = true;
+
+            if (message.Recipient.UserName == username) message.RecipientDeleted = true;
+
+            if (message.SenderDeleted && message.RecipientDeleted)
+                _messageService.DeleteMessage(message);
+
+            if (await _messageService.SaveAllAsync()) return Ok();
+
+            return BadRequest("Problem deleting the message");
         }
     }
 }
