@@ -30,7 +30,7 @@ namespace API.DAL.Message
 
         public async Task<Entities.Message> GetMessage(int id)
         {
-            return await _databaseContext.Messages.FindAsync(id);
+            return await _databaseContext.Messages.Include(x=>x.Sender).Include(x=>x.Recipient).SingleOrDefaultAsync(x=>x.Id==id);
         }
 
         public Task<PagedList<MessageModel>> GetMessagesForUser(MessageParams messageParams)
