@@ -7,6 +7,7 @@ using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -86,6 +87,12 @@ namespace API.DAL.User
                 //    Errors = result.Errors.Select(x => x.Description).ToList()
                 //};
                 throw new ValidationException("User not created successfully");
+            }
+            var roleResult = await _identityService.AddToRoleAsync(user, "Member");
+            if (!result.Succeeded)
+            {
+                _logger.LogError("Role not created successfully");
+                throw new ValidationException("Role not created successfully");
             }
             var identityUser = await _identityService.FindByUserNameAsync(model.UserName);
             return await _tokenGenerator.GenerateUserToken(identityUser);
@@ -181,9 +188,9 @@ namespace API.DAL.User
             };
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string id)
+        public async Task<ApplicationUser> GetUserByIdAsync(int id)
         {
-            return await _identityService.FindByIdAsync(id);
+            return await _identityService.FindByIdAsync(id.ToString());
         }
 
         public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
@@ -219,5 +226,14 @@ namespace API.DAL.User
             return await _databaseContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<List<ApplicationUser>> GetUsersWithRoles()
+        {
+            return await _identityService.GetUsersWithRoles();
+        }
+
+        public async Task<List<string>> GetUserRoles(ApplicationUser user)
+        {
+            return await _identityService.GetUserRoles(user);
+        }
     }
 }

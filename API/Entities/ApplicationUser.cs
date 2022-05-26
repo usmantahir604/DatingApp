@@ -2,7 +2,7 @@
 
 namespace API.Entities
 {
-    public class ApplicationUser: IdentityUser
+    public class ApplicationUser: IdentityUser<int>
     {
         public ApplicationUser()
         {
@@ -26,5 +26,7 @@ namespace API.Entities
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         public virtual ICollection<Message> MessagesSent { get; set; }
         public virtual ICollection<Message> MessagesRecieved { get; set; }
+        public ICollection<ApplicationUserRole> UserRoles { get; set; }
+
     }
 }

@@ -15,7 +15,7 @@ namespace API.DAL.Like
         {
             _databaseContext = databaseContext;
         }
-        public async Task<UserLike> GetUserLike(string sourceUserId, string likedUserId)
+        public async Task<UserLike> GetUserLike(int sourceUserId, int likedUserId)
         {
             return await _databaseContext.Likes.FindAsync(sourceUserId, likedUserId);
         }
@@ -49,7 +49,7 @@ namespace API.DAL.Like
             return await PagedList<LikeModel>.CreateAsync(likedUsers, likesParams.PageNumber, likesParams.PageSize);
         }
 
-        public async Task<ApplicationUser> GetUserWithLikes(string userId)
+        public async Task<ApplicationUser> GetUserWithLikes(int userId)
         {
             return await _databaseContext.Users.Include(x=>x.LikedUsers).Where(x=>x.Id == userId).FirstOrDefaultAsync();
         }

@@ -38,6 +38,23 @@ namespace API.Identity
         {
             return  await _userManager.Users.Include(x=>x.Photos).SingleOrDefaultAsync(x => x.UserName == userName);
         }
+
+        public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
+        {
+            return await _userManager.AddToRoleAsync(user, role);
+        }
+
+        public async Task<List<ApplicationUser>> GetUsersWithRoles()
+        {
+            var users = await _userManager.Users.Include(x => x.UserRoles).ThenInclude(x => x.Role).OrderBy(x=>x.UserName).ToListAsync();
+            return users;
+        }
+
+        public async Task<List<string>> GetUserRoles(ApplicationUser user)
+        {
+            var result= await _userManager.GetRolesAsync(user);
+            return (List<string>)result;
+        }
     }
 
    

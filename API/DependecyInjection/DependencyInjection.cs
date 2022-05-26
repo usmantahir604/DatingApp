@@ -24,12 +24,10 @@ namespace API.DependecyInjection
     {
         public static IServiceCollection AddAutoMapper(this IServiceCollection services)
         {
-            var appUserMappingProfile = ApplicationModule.AppUserMappingProfile();
             var applicationUserMappingProfile = ApplicationModule.ApplicationUserMappingProfile();
             var messageMappingProfile = ApplicationModule.MessageMappingProfile();
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(appUserMappingProfile);
                 mc.AddProfile(applicationUserMappingProfile);
                 mc.AddProfile(messageMappingProfile);
             });
@@ -44,12 +42,12 @@ namespace API.DependecyInjection
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
             });
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequiredLength = 6;
-            });
-            services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContext>()
-                .AddDefaultTokenProviders();
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.Password.RequiredLength = 6;
+            //});
+            //services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<DatabaseContext>()
+            //    .AddDefaultTokenProviders();
             return services;
         }
 
@@ -66,6 +64,15 @@ namespace API.DependecyInjection
 
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+            })
+                .AddRoles<ApplicationRole>()
+                .AddRoleManager<RoleManager<ApplicationRole>>()
+                .AddSignInManager<SignInManager<ApplicationUser>>()
+                .AddRoleValidator<RoleValidator<ApplicationRole>>()
+                .AddEntityFrameworkStores<DatabaseContext>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ITokenGenerator, TokenGenerator>();
             InitializeIdentityParameters(services, configuration);
@@ -108,6 +115,13 @@ namespace API.DependecyInjection
                 x.RequireHttpsMetadata = false;
                 x.TokenValidationParameters = tokenValidationParameters;
             });
+
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+                opt.AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+            });
+
         }
 
     }

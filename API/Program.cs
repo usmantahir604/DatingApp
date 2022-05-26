@@ -19,12 +19,13 @@ namespace API
                     {
                         var context = services.GetRequiredService<DatabaseContext>();
                         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                        var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
                         if (context.Database.IsSqlServer())
                         {
                             await context.Database.MigrateAsync();
                         }
 
-                        await DatabaseContextSeed.SeedUsers(userManager);
+                        await DatabaseContextSeed.SeedData(userManager,roleManager);
                     }
                     catch (Exception ex)
                     {

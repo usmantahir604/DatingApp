@@ -6,7 +6,29 @@ namespace API.Database
 {
     public class DatabaseContextSeed
     {
-        public static async Task SeedUsers(UserManager<ApplicationUser> userManager)
+        public static async Task SeedData(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        {
+            await AddRoles(roleManager);
+            await AddUsers(userManager);
+        }
+
+        private static async Task AddRoles(RoleManager<ApplicationRole> roleManager)
+        {
+            var existingRoles = roleManager.Roles.ToList();
+            var newRoles=new List<ApplicationRole>()
+            {
+                new ApplicationRole(){Name="Admin"},
+                new ApplicationRole(){Name="Member"},
+                new ApplicationRole(){Name="Moderator"}
+            };
+
+            var result = newRoles.Where(er => existingRoles.All(newR => !string.Equals(newR.Name, er.Name, StringComparison.CurrentCultureIgnoreCase)));
+            foreach (var role in result)
+            {
+                await roleManager.CreateAsync(role);
+            }
+        }
+        private static async Task AddUsers(UserManager<ApplicationUser> userManager)
         {
             var existingUsers = userManager.Users.ToList();
             var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
@@ -19,8 +41,24 @@ namespace API.Database
             });
             foreach (var user in newUsers)
             {
-                await userManager.CreateAsync(user, "Test@123");
+                var created=await userManager.CreateAsync(user, "Test@123");
+                if (created.Succeeded)
+                  await  userManager.AddToRoleAsync(user, "Member");
+            }
+
+            var admin = new ApplicationUser
+            {
+                UserName = "admin"
+            };
+            var adminResult = existingUsers.FirstOrDefault(x=>x.UserName == admin.UserName);
+            if(adminResult == null)
+            {
+                var created = await userManager.CreateAsync(admin, "Test@123");
+                if (created.Succeeded)
+                    await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
             }
         }
+
+        
     }
 }

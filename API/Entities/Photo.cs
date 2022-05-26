@@ -9,7 +9,7 @@ namespace API.Entities
         public string Url { get; set; }
         public bool IsMain { get; set; }
         public string PublicId { get; set; }
-        public string AppUserId { get; set; }
+        public int AppUserId { get; set; }
 
         [ForeignKey(nameof(AppUserId))]
         public ApplicationUser AppUser { get; set; }
