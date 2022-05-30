@@ -4,6 +4,7 @@ using API.Entities;
 using API.Filters;
 using API.Middleware;
 using API.Options;
+using API.SignalR;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,7 @@ namespace API
             services.AddDBServices(Configuration);
             services.AddIdentityServices(Configuration);
             SetSwaggerTokenDefinition(services);
+            services.AddSignalR();
         }
 
 
@@ -77,6 +79,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<PresenceHub>("hubs/presence");
             });
         }
 
