@@ -10,6 +10,7 @@ using API.Helpers;
 using API.Identity;
 using API.Interfaces;
 using API.Modules;
+using API.SignalR;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -53,6 +54,7 @@ namespace API.DependecyInjection
 
         public static IServiceCollection AddApplicationService(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<PresenceTracker>();
             services.Configure<CloudinarySettings>(configuration.GetSection(nameof(CloudinarySettings)));
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPhotoService, PhotoService>();
