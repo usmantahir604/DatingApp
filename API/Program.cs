@@ -69,3 +69,5 @@ namespace API
 // Add-Migration InitialCreate
 
 //Remove-Migration // Remove migration which is not run yet
+
+// Update-database Migrationname // revert migrations after the migation name runs 
