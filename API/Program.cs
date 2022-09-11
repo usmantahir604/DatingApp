@@ -67,3 +67,5 @@ namespace API
 // get - help
 // get-help Add-Migration
 // Add-Migration InitialCreate
+
+//Remove-Migration // Remove migration which is not run yet
